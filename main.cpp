@@ -19,10 +19,10 @@ int main(int argc,char **argv){
 
 	// iterate over input files
 	for(int i=2;i<argc;++i){
-		try{
-			// figure out the file ext
-			const char *const ext=fileext(argv[i]);
+		// figure out the file ext
+		const char *const ext=fileext(argv[i]);
 
+		try{
 			// atlas supports targa (.tga) images for now
 			if(icompare(ext,"tga")){
 				// construct Targa object

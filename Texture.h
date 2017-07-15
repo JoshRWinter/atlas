@@ -12,6 +12,11 @@ class TextureErrorNotFound:public TextureError{
 	virtual const char *what()const noexcept{return "no such file";}
 };
 
+class TextureErrorCorrupt:public TextureError{
+public:
+	virtual const char *what()const noexcept{return "corrupt or malformed file";}
+};
+
 class Texture{
 public:
 	virtual ~Texture(){};

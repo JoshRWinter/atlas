@@ -3,12 +3,15 @@
 #include "Atlas.h"
 
 Atlas::Atlas(){
+	canvas=NULL;
 }
 
 Atlas::~Atlas(){
 	// iterate over bitmaps and free img data
 	for(const Bitmap &b:bitmap_list)
 		delete[] b.bmp;
+	// canvas
+	delete[] canvas;
 }
 
 void Atlas::add(const Texture &texture){

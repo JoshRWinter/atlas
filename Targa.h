@@ -3,6 +3,16 @@
 
 #include "Texture.h"
 
+class TargaErrorCompressed:public TextureError{
+public:
+	virtual const char *what()const noexcept{return "compressed TARGAs are not supported";}
+};
+
+class TargaErrorBPP:public TextureError{
+public:
+	virtual const char *what()const noexcept{return "unsupported BPP";}
+};
+
 class Targa:public Texture{
 public:
 	Targa(const char*);

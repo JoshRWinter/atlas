@@ -19,10 +19,12 @@ public:
 	Atlas();
 	~Atlas();
 	void add(const Texture&);
+	void compile();
 	int write(const char*)const; // save to file
 
 private:
 	std::vector<Bitmap> bitmap_list;
+	unsigned char *canvas;
 };
 
 #endif // ATLAS_H
