@@ -2,3 +2,4 @@ atlas
 *.o
 output
 *.tga
+*.txt
