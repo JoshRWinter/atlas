@@ -22,6 +22,8 @@ public:
 	virtual void get_bitmap(unsigned char*)const;
 
 private:
+	void bgr_to_rgb();
+
 	int width;
 	int height;
 	unsigned char *data; // img data

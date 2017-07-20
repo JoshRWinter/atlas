@@ -77,6 +77,9 @@ Targa::Targa(const char *filename){
 			index+=4;
 		}
 	}
+
+	// correct pixel storage
+	bgr_to_rgb();
 }
 
 Targa::~Targa(){
@@ -85,4 +88,14 @@ Targa::~Targa(){
 
 void Targa::get_bitmap(unsigned char *bmp)const{
 	memcpy(bmp,data,width*height*4);
+}
+
+// TGAs store pixels [blue, green, red, alpha]
+// atlas supports only [red, green, blue, alpha]
+void Targa::bgr_to_rgb(){
+	for(int i=0;i<width*height*4;i+=4){
+		int tmp=data[i];
+		data[i]=data[i+2];
+		data[i+2]=tmp;
+	}
 }
