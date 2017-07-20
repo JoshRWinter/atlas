@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string.h>
+#include <stdio.h>
 #include <ctype.h>
 
 #include "Atlas.h"

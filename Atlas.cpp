@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <zlib.h>
 
 #include "Atlas.h"
 
@@ -34,7 +35,7 @@ void Atlas::add(const Texture &texture){
 	texture.get_bitmap(imgdata);
 
 	// add to internal store (std::vector<Bitmap>)
-	bitmap_list.push_back(Bitmap(width,height,imgdata));
+	bitmap_list.push_back(Bitmap(width,height,imgdata,bitmap_list.size()));
 }
 
 // the main "arranging" function
@@ -50,6 +51,11 @@ void Atlas::compile(){
 
 	// decide the number of columns to generate
 	const int colnum=sqrt(bitmap_list.size());
+
+	// figure out avg bitmap width
+	float avg_width=0.0f;
+	for(const Bitmap &b:bitmap_list)
+		avg_width+=(float)b.width/bitmap_list.size();
 
 	int current_col=0;
 	int row_first_y_insert=PADDING;
@@ -74,7 +80,8 @@ void Atlas::compile(){
 				new_row_flag=true;
 			}
 		}
-		++current_col;
+		if(b.width>avg_width/2.0f)
+			++current_col;
 
 		if(new_row_flag){
 			b.xpos=PADDING;
@@ -118,7 +125,81 @@ void Atlas::compile(){
 }
 
 int Atlas::write(const char *output){
-	return 0;
+	if(canvas==NULL)
+		compile();
+
+	// construct header
+	std::vector<unsigned short> header;
+
+	// save the number of textures in the header
+	header.push_back(bitmap_list.size());
+
+	// save the dimension of the atlas bitmap in the header
+	header.push_back(canvas_width);
+	header.push_back(canvas_height);
+
+	// need to process them in the order they were added,
+	// which is not the current order
+	for(int i=0;i<bitmap_list.size();++i){
+		// find the bitmap with id <i>
+		int index=-1;
+		for(int j=0;j<bitmap_list.size();++j){
+			if(bitmap_list[j].id==i){
+				index=j;
+				break;
+			}
+		}
+		if(index==-1)
+			return 0;
+
+		// save the coordinates in the header
+		header.push_back(bitmap_list[index].xpos);
+		header.push_back(bitmap_list[index].ypos);
+		header.push_back(bitmap_list[index].width);
+		header.push_back(bitmap_list[index].height);
+	}
+
+	// create new buffer with header followed by canvas bitmap data
+	const int combined_size=header.size()*sizeof(unsigned short)+get_canvas_size();
+	unsigned char *combined=new unsigned char[combined_size];
+	memcpy(combined,&header[0],header.size()*sizeof(unsigned short)); // copy the header
+	memcpy(combined+(header.size()*sizeof(unsigned short)),canvas,get_canvas_size()); // copy canvas bitmap data
+
+	// create new buffer for compressed data
+	uLongf compressed_size=(combined_size*1.1)+12;
+	Bytef *compressed=new Bytef[compressed_size];
+	memset(compressed,0,compressed_size);
+
+	// compress with zlib
+	int result=compress(compressed,&compressed_size,combined,combined_size);
+	if(result!=Z_OK)
+		std::cout<<"compression failed!"<<std::endl;
+
+	// no longer needed
+	delete[] combined;
+
+	// write to file
+	std::ofstream out(output);
+	if(!out){
+		std::cout<<"error: could not open \""<<output<<"\" for writing"<<std::endl;
+		delete[] compressed;
+		return 0;
+	}
+
+	// write magic
+	unsigned char magic[]={'J','R','W'};
+	out.write((char*)magic,3);
+
+	// write uncompressed size
+	unsigned int cs=(unsigned int)combined_size;
+	out.write((char*)&cs,sizeof(unsigned int));
+
+	// write compressed data
+	out.write((char*)compressed,compressed_size);
+
+	delete[] compressed;
+
+	return compressed_size+4+3;
 }
 
 int Atlas::write_tga(const char *output){

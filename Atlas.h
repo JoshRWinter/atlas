@@ -11,13 +11,14 @@
 
 // used internally in class Atlas
 struct Bitmap{
-	Bitmap(int w,int h,unsigned char *b)
-	: width(w),height(h),xpos(-1),ypos(-1),bmp(b){}
+	Bitmap(int w,int h,unsigned char *b,int unique)
+	:width(w),height(h),xpos(-1),ypos(-1),bmp(b),id(unique){}
 	bool contained()const;
 	bool collide(const Bitmap&)const;
 	bool operator>(const Bitmap&)const;
 	int size()const{return height;}
 
+	int id;
 	int width;
 	int height;
 	int xpos; // xpos in the final canvas
