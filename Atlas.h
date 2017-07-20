@@ -7,7 +7,7 @@
 #include "Texture.h"
 #include "Targa.h"
 
-#define PADDING 0 // padding in between textures
+#define PADDING 1 // padding in between textures
 
 // used internally in class Atlas
 struct Bitmap{
