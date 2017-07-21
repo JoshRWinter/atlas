@@ -77,7 +77,7 @@ static void calc_size(int bytes,std::string &size){
 }
 
 static void usage(const char *name){
-	std::cout<<"Usage:\n"<<name<<" output_file file1.tga [file2.tga ...]"<<std::endl;
+	std::cout<<"Usage: "<<name<<" output_file file1.tga [file2.tga ...]"<<std::endl;
 }
 
 static const char *fileext(const char *name){
