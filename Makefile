@@ -1,6 +1,6 @@
 CPP      := g++
-CPPFLAGS := -g -std=c++11 -c
-LFLAGS   := -lz
+CPPFLAGS := -std=c++11 -O2 -c
+LFLAGS   := -lz -s
 REMOVE   := rm
 
 OBJ      := main.o Atlas.o Targa.o
