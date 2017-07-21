@@ -60,7 +60,7 @@ int main(int argc,char **argv){
 	calc_size(bytes,formatted);
 	calc_size(uncompressed,formatted_uncompressed);
 	if(bytes>=0)
-		std::cout<<"successfully wrote "<<atlas.get_count()<<" images ("<<formatted_uncompressed<<" bmp / "<<formatted<<" output) to \""<<argv[1]<<"\""<<std::endl;
+		std::cout<<atlas.get_count()<<" image(s) successfully written to \""<<argv[1]<<"\" ("<<formatted_uncompressed<<" bmp / "<<formatted<<" output)"<<std::endl;
 	else
 		std::cout<<"error: could not open output file \""<<argv[1]<<"\" in write mode"<<std::endl;
 
